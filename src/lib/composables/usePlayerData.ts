@@ -1,5 +1,5 @@
+import { player, Player } from "@/game/player";
 import { onUnmounted, shallowRef } from "vue";
-import { player, Player } from "../game/player";
 
 export const usePlayerData = <T>(selector: (player: Player) => T) => {
     const value = shallowRef(selector(player));

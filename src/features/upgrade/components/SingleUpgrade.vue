@@ -1,20 +1,17 @@
 <script lang="ts" setup>
-import { useUpdate } from "../composables/useUpdate";
-import { Upgrade } from "../lib/classes/upgrade";
+import { useUpdate } from "@/lib/composables/useUpdate";
+import { Upgrade } from "@/features/upgrade/core/upgrade";
 
 const props = defineProps<{ upgrade: Upgrade }>();
 
-const canPurchase = useUpdate(() => {
-    return props.upgrade.canPurchase;
-});
+const canPurchase = useUpdate(() => props.upgrade.canPurchase);
+const hasUpgrade = useUpdate(() => props.upgrade.hasUpgrade);
 </script>
 
 <template>
-    <!-- This is reactive -->
     <div :class="{ canBuy: canPurchase }">
         <h2>{{ upgrade.description }}</h2>
-        <!-- This is also reactive, why? -->
-        <div v-if="upgrade.hasUpgrade">Owned</div>
+        <div v-if="hasUpgrade">Owned</div>
         <p>Cost: {{ upgrade.cost }}</p>
         <button @click="upgrade.purchase()">Buy</button>
     </div>

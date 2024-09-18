@@ -15,6 +15,9 @@ dist-ssr
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+# normally this is gitignored, but the setting enables auto import to use path aliases,
+# Which makes the code much cleaner
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo

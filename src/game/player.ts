@@ -5,6 +5,9 @@ export const initialPlayer = () => ({
         money: new Decimal(0),
         fame: new Decimal(0),
     },
+    buildings: {
+        money: {} as Record<string, number>,
+    },
     upgrades: {
         money: [] as string[],
         otherUpgrades: [] as string[],
@@ -22,6 +25,7 @@ export const initialPlayer = () => ({
 
 export type Player = ReturnType<typeof initialPlayer>;
 export type CurrencyKey = keyof Player["currencies"];
+export type BuildingKey = keyof Player["buildings"];
 export type UpgradeKey = keyof Player["upgrades"];
 export type RebuyableUpgradeKey = keyof Player["rebuyableUpgrades"];
 export type OptionKey = keyof Player["options"];

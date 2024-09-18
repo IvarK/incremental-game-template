@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { usePlayerData } from "./composables/usePlayerData";
-import { player } from "./game/player";
-import { MoneyUpgrades } from "./db/upgradeDb";
-import SingleUpgrade from "./components/SingleUpgrade.vue";
+import SingleUpgrade from "@/features/upgrade/components/SingleUpgrade.vue";
+import { MoneyUpgrades } from "@/features/upgrade/core/upgradeDb";
+import { player } from "@/game/player";
+import { usePlayerData } from "@/lib/composables/usePlayerData";
 
 const money = usePlayerData((player) => player.currencies.money);
 

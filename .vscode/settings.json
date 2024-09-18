@@ -1,0 +1,5 @@
+{
+    // Makes auto import to prefer path aliases over relative paths
+    // so instead of ../../../../some/path you get @/some/path
+    "typescript.preferences.importModuleSpecifier": "non-relative"
+}

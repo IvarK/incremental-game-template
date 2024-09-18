@@ -1,6 +1,3 @@
-import { CurrencyKey, UpgradeKey } from "../../game/player";
-import { Upgrade, UpgradeOptions } from "../classes/upgrade";
-
 export type IdsFromClasses<
     T extends { all: unknown } & { [key: string]: unknown },
 > = keyof Omit<T, "all">;
@@ -12,42 +9,42 @@ export type IdsFromClasses<
 // for example every Upgrade has an upgradeKey and a currency, but we might not want to define
 // them for every single upgradeConfig in the db.
 // Last input is the class instance itself which we use to create instances
-export const createUpgradesFromDbGeneric = <
-    T extends readonly { id: string }[],
-    G extends object,
-    U extends new (config: T[number] & G) => InstanceType<U> & { id: string },
+export const createClassesFromDb = <
+    T extends readonly { id: string }[], // Array of objects with id
+    U extends new (config: T[number] & G) => InstanceType<U> & { id: string }, // Ensure U instances have id
+    G extends object = Omit<ConstructorParameters<U>[0], keyof T[number]>, // Infer G based on U, omitting keys from T[number]
 >(
     config: T,
     generalConfig: G,
-    UpgradeClass: U
+    Class: U
 ) => {
-    type ClassInstance = InstanceType<U>;
+    // Ensure the instance has an id
+    type ClassInstance = InstanceType<U> & { id: string };
     type ClassId = T[number]["id"];
-    type ClassRecord = { [key in ClassId]: ClassInstance };
+    type ClassRecord = Record<ClassId, ClassInstance>;
 
-    const classArray = config.map(
-        (configItem) => new UpgradeClass({ ...configItem, ...generalConfig })
+    const classArray: ClassInstance[] = config.map(
+        (configItem) => new Class({ ...configItem, ...generalConfig })
     );
+
+    const classRecord = classArray.reduce((acc, curr) => {
+        acc[curr.id as ClassId] = curr;
+        return acc;
+    }, {} as ClassRecord);
 
     return {
         all: classArray,
-        ...classArray.reduce((acc, curr) => {
-            acc[curr.id as ClassId] = curr;
-            return acc;
-        }, {} as ClassRecord),
+        ...classRecord,
     } as { all: ClassInstance[] } & ClassRecord;
 };
 
-export const createUpgradesFromDb = <
-    T extends readonly Omit<UpgradeOptions, "upgradeKey" | "currency">[], // This is readonly so that we get typed output with the ids as keys
->(
-    config: T,
-    upgradeKey: UpgradeKey,
-    currency: CurrencyKey
-) => {
-    return createUpgradesFromDbGeneric(
-        config,
-        { upgradeKey, currency },
-        Upgrade
-    );
-};
+/* 
+Use it like this, NOTICE THE 'as const', it's important
+
+export const MoneyUpgrades = createClassesFromDb(
+    moneyUpgradesDb,
+    { upgradeKey: "money", currency: "money" } as const,
+    Upgrade
+);
+
+*/

@@ -1,39 +1,26 @@
+import { player, UpgradeKey } from "@/game/player";
+import { UpgradeBase, UpgradeBaseOptions } from "@/lib/classes/upgradeBase";
 import Decimal from "break_infinity.js";
-import { CurrencyKey, player, UpgradeKey } from "../../game/player";
 
 // This reduces the queries to useUpgradeStore
 const upgradeCache: Record<string, boolean> = {};
 
-export type UpgradeOptions = {
-    id: string;
+export type UpgradeOptions = UpgradeBaseOptions & {
     cost: Decimal;
     upgradeKey: UpgradeKey;
-    currency: CurrencyKey;
-    description?: string;
     visible?: () => boolean;
-    effect?: () => Decimal;
 };
 
-export class Upgrade {
+export class Upgrade extends UpgradeBase {
     config: UpgradeOptions;
-    constructor(config: UpgradeOptions) {
-        this.config = config;
-    }
 
-    get id() {
-        return this.config.id;
+    constructor(config: UpgradeOptions) {
+        super(config);
+        this.config = config;
     }
 
     get cost() {
         return this.config.cost;
-    }
-
-    get description() {
-        return this.config.description;
-    }
-
-    get isVisible() {
-        return this.config.visible?.() ?? true;
     }
 
     get hasUpgrade() {
@@ -44,12 +31,6 @@ export class Upgrade {
         upgradeCache[this.id] = hasUpgrade;
 
         return hasUpgrade;
-    }
-
-    get canPurchase() {
-        if (this.hasUpgrade) return false;
-
-        return player.currencies[this.config.currency].gte(this.cost);
     }
 
     purchase() {
