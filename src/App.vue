@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import SingleBuilding from "@/features/building/components/SingleBuilding.vue";
+import { Buildings } from "@/features/building/core/buildingDb";
 import SingleUpgrade from "@/features/upgrade/components/SingleUpgrade.vue";
 import { MoneyUpgrades } from "@/features/upgrade/core/upgradeDb";
 import { player } from "@/game/player";
 import { usePlayerData } from "@/lib/composables/usePlayerData";
+import { format } from "@/lib/options/notations";
 
 const money = usePlayerData((player) => player.currencies.money);
 
@@ -13,25 +16,37 @@ const addMoney = () => {
 
 <template>
     <button @click="addMoney">Add money</button>
-    <p>Money: {{ money }}</p>
-    <SingleUpgrade
-        v-for="upgrade in MoneyUpgrades.all"
-        :key="upgrade.id"
-        :upgrade="upgrade"
-    />
+    <p>Money: {{ format(money) }}</p>
+    <div class="container-container">
+        <div class="class-container">
+            <SingleUpgrade
+                v-for="upgrade in MoneyUpgrades.all"
+                :key="upgrade.id"
+                :upgrade="upgrade"
+            />
+        </div>
+
+        <div class="class-container">
+            <SingleBuilding
+                v-for="building in Buildings.all"
+                :key="building.id"
+                :building="building"
+            />
+        </div>
+    </div>
 </template>
 
 <style scoped>
-.logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
+/* Nice naming bro */
+.container-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
 }
-.logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-    filter: drop-shadow(0 0 2em #42b883aa);
+
+.class-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 </style>

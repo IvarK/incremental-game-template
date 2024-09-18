@@ -2,9 +2,8 @@ import { BuildingKey, CurrencyKey, player } from "@/game/player";
 import { UpgradeBase, UpgradeBaseOptions } from "@/lib/classes/upgradeBase";
 import Decimal from "break_infinity.js";
 
-const upgradeCache: Record<string, number> = {};
-
-export type BuildingOptions = UpgradeBaseOptions & {
+export type BuildingOptions = Omit<UpgradeBaseOptions, "description"> & {
+    name: string;
     initialCost: Decimal;
     costMultiplier: Decimal;
     upgradeKey: BuildingKey;
@@ -20,13 +19,12 @@ export class Building extends UpgradeBase {
         this.config = config;
     }
 
-    get purchased() {
-        if (upgradeCache[this.id] !== undefined) return upgradeCache[this.id];
-        const bought =
-            player.rebuyableUpgrades[this.config.upgradeKey][this.id];
-        upgradeCache[this.id] = bought;
+    get name() {
+        return this.config.name;
+    }
 
-        return bought;
+    get purchased() {
+        return player.buildings[this.config.upgradeKey][this.id] ?? 0;
     }
 
     get cost() {
@@ -40,7 +38,7 @@ export class Building extends UpgradeBase {
     }
 
     get canPurchase() {
-        return player.currencies.money.gte(this.cost);
+        return player.currencies[this.config.currency].gte(this.cost);
     }
 
     purchase() {
@@ -55,7 +53,6 @@ export class Building extends UpgradeBase {
         if (!this.purchased) return false;
 
         player.buildings[this.config.upgradeKey][this.id] = 0;
-        upgradeCache[this.id] = 0;
     }
 
     /**

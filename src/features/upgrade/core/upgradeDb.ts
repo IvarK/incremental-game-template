@@ -4,6 +4,8 @@ import { createClassesFromDb } from "@/lib/util/createClassFromDb";
 import { OmitCommonUpgradeOptions } from "@/lib/util/types";
 import Decimal from "break_infinity.js";
 
+// OmitCommonUpgradeOptions is a utility type that removes 'currency' and 'upgradeKey'
+// We use it because they are common values across all the upgrades of a single type
 type UpgradeDbConfig = OmitCommonUpgradeOptions<UpgradeOptions>;
 
 // ===== MONEY UPGRADES =====
@@ -19,6 +21,9 @@ const moneyUpgradesDb = [
         description: "Get 3x money",
         visible: () => player.currencies.money.gte(10),
     },
+    // 'as const' is used so we can use the id's as keys
+    // 'satisfies...' is used so that we will get an error here if the config is incorrect
+    // otherwise we would get an error further down, which is less helpful
 ] as const satisfies Readonly<UpgradeDbConfig[]>;
 
 // Note: 'as const' is important, otherwise you will get an error

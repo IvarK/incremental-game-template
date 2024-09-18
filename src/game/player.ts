@@ -1,3 +1,4 @@
+import { Notation } from "@/lib/options/notations";
 import Decimal from "break_infinity.js";
 
 export const initialPlayer = () => ({
@@ -18,9 +19,11 @@ export const initialPlayer = () => ({
     },
 
     options: {
-        notation: "",
+        notation: "mixed scientific" as Notation,
         someOtherOption: 1,
     },
+
+    lastTick: Date.now(),
 });
 
 export type Player = ReturnType<typeof initialPlayer>;

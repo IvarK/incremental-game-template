@@ -10,16 +10,16 @@ type BuildingDbConfig = OmitCommonUpgradeOptions<
 const moneyBuildingsDb = [
     {
         id: "moneyBuilding1",
+        name: "Grandma",
         initialCost: new Decimal(10),
         costMultiplier: new Decimal(1.1),
-        description: "A building that produces money",
         production: (purchased: number) => new Decimal(1).times(purchased),
     },
     {
         id: "moneyBuilding2",
+        name: "A Dimension",
         initialCost: new Decimal(100),
         costMultiplier: new Decimal(1.1),
-        description: "A building that produces money",
         production: (purchased: number) => new Decimal(10).times(purchased),
     },
 ] as const satisfies Readonly<BuildingDbConfig[]>;
