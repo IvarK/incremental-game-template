@@ -22,11 +22,12 @@ export class Upgrade extends UpgradeBase {
             this.config.effectTarget &&
             this.config.effectOperator
         ) {
-            EffectManager.register(
-                this.config.effectTarget,
-                this.config.effect,
-                this.config.effectOperator
-            );
+            EffectManager.register({
+                target: this.config.effectTarget,
+                operator: this.config.effectOperator,
+                effect: this.config.effect,
+                active: () => this.hasUpgrade,
+            });
         }
     }
 

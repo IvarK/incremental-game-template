@@ -5,6 +5,7 @@ export type Operator = "add" | "mult" | "pow";
 type EffectInstance = {
     effect: Numberish | (() => Numberish);
     operator: Operator;
+    active: () => boolean;
 };
 
 class Effect {
@@ -13,15 +14,12 @@ class Effect {
         this._effects = {};
     }
 
-    register(
-        effectTarget: string,
-        effect: Numberish | (() => Numberish),
-        operator: Operator
-    ) {
-        if (this._effects[effectTarget] === undefined) {
-            this._effects[effectTarget] = [];
+    register(effect: EffectInstance & { target: string }) {
+        const { target, ...rest } = effect;
+        if (this._effects[target] === undefined) {
+            this._effects[target] = [];
         }
-        this._effects[effectTarget].push({ effect, operator });
+        this._effects[target].push({ ...rest });
     }
 
     get(effectTarget: string) {
@@ -32,6 +30,7 @@ class Effect {
         const [add, mult, pow]: { effect: Numberish }[][] = [[], [], []];
 
         effects.forEach((e) => {
+            if (!e.active()) return;
             const effect =
                 typeof e.effect === "function" ? e.effect() : e.effect;
             if (e.operator === "add") add.push({ effect });
