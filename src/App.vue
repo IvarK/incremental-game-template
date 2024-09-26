@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import SingleBuilding from "@/features/building/components/SingleBuilding.vue";
-import { Buildings } from "@/features/building/core/buildingDb";
+import { MoneyBuildings } from "@/features/building/core/buildingDb";
 import SingleUpgrade from "@/features/upgrade/components/SingleUpgrade.vue";
 import { MoneyUpgrades } from "@/features/upgrade/core/upgradeDb";
 import { player } from "@/game/player";
 import { usePlayerData } from "@/lib/composables/usePlayerData";
 import { format } from "@/lib/options/notations";
+import { totalMoneyGain } from "./features/building/core/buildingUtils";
 
 const money = usePlayerData((player) => player.currencies.money);
 
@@ -17,6 +18,7 @@ const addMoney = () => {
 <template>
     <button @click="addMoney">Add money</button>
     <p>Money: {{ format(money) }}</p>
+    <p>{{ format(totalMoneyGain()) }} money/s</p>
     <div class="container-container">
         <div class="class-container">
             <SingleUpgrade
@@ -28,7 +30,7 @@ const addMoney = () => {
 
         <div class="class-container">
             <SingleBuilding
-                v-for="building in Buildings.all"
+                v-for="building in MoneyBuildings.all"
                 :key="building.id"
                 :building="building"
             />

@@ -9,14 +9,14 @@ type BuildingDbConfig = OmitCommonUpgradeOptions<
 
 const moneyBuildingsDb = [
     {
-        id: "moneyBuilding1",
+        id: "grandma",
         name: "Grandma",
         initialCost: new Decimal(10),
         costMultiplier: new Decimal(1.1),
         production: (purchased: number) => new Decimal(1).times(purchased),
     },
     {
-        id: "moneyBuilding2",
+        id: "dimension",
         name: "A Dimension",
         initialCost: new Decimal(100),
         costMultiplier: new Decimal(1.1),
@@ -25,7 +25,7 @@ const moneyBuildingsDb = [
 ] as const satisfies Readonly<BuildingDbConfig[]>;
 
 // Note: 'as const' is important, otherwise you will get an error
-export const Buildings = createClassesFromDb(
+export const MoneyBuildings = createClassesFromDb(
     moneyBuildingsDb,
     {
         currency: "money",

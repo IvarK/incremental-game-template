@@ -1,21 +1,17 @@
-import { Buildings } from "@/features/building/core/buildingDb";
+import { EVENT } from "@/game/enum/eventTypes";
 import { player } from "@/game/player";
-
-const tick = (diff: number) => {
-    for (const building of Buildings.all) {
-        building.tick(diff);
-    }
-};
-
-export const startMainLoop = () => {
+import { Events } from "@/lib/util/events";
+export const startLoops = () => {
     const loop = () => {
         const now = Date.now();
         const diff = now - player.lastTick;
 
-        tick(diff);
+        Events.dispatch(EVENT.GAME_TICK, diff);
 
         player.lastTick = now;
     };
 
     setInterval(loop, 30);
+    setInterval(() => Events.dispatch(EVENT.LONG_UPDATE), 1000);
+    setInterval(() => Events.dispatch(EVENT.SAVE_GAME), 10000);
 };

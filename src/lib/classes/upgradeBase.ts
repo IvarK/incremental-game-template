@@ -1,4 +1,6 @@
 import { CurrencyKey, player } from "@/game/player";
+import { Operator } from "@/lib/util/effect";
+import { Numberish } from "@/lib/util/types";
 import Decimal from "break_infinity.js";
 
 export type UpgradeBaseOptions = {
@@ -6,6 +8,9 @@ export type UpgradeBaseOptions = {
     currency: CurrencyKey;
     description?: string;
     visible?: () => boolean;
+    effect?: Numberish | ((purchased?: number) => Numberish);
+    effectTarget?: string;
+    effectOperator?: Operator;
 };
 
 export class UpgradeBase {
@@ -39,6 +44,14 @@ export class UpgradeBase {
         if (this.hasUpgrade) return false;
 
         return player.currencies[this.config.currency].gte(this.cost);
+    }
+
+    get effect() {
+        if ("effect" in this.config === false || !this.hasUpgrade) return 1;
+
+        return typeof this.config.effect === "function"
+            ? this.config.effect()
+            : this.config.effect;
     }
 
     purchase() {

@@ -1,4 +1,6 @@
+import { MoneyBuildings } from "@/features/building/core/buildingDb";
 import { Upgrade, UpgradeOptions } from "@/features/upgrade/core/upgrade";
+import { EFFECT_TARGET } from "@/game/enum/effectTargets";
 import { player } from "@/game/player";
 import { createClassesFromDb } from "@/lib/util/createClassFromDb";
 import { OmitCommonUpgradeOptions } from "@/lib/util/types";
@@ -11,15 +13,21 @@ type UpgradeDbConfig = OmitCommonUpgradeOptions<UpgradeOptions>;
 // ===== MONEY UPGRADES =====
 const moneyUpgradesDb = [
     {
-        id: "doubleMoney",
+        id: "grandmaBoost",
         cost: new Decimal(10),
-        description: "Get 2x money",
+        description: "Gain 5% more money per grandma",
+        effect: () => Decimal.pow(1.05, MoneyBuildings.grandma.purchased),
+        effectTarget: EFFECT_TARGET.money,
+        effectOperator: "mult",
     },
     {
         id: "tripleMoney",
         cost: new Decimal(50),
         description: "Get 3x money",
         visible: () => player.currencies.money.gte(10),
+        effect: () => 3,
+        effectTarget: EFFECT_TARGET.money,
+        effectOperator: "mult",
     },
     // 'as const' is used so we can use the id's as keys
     // 'satisfies...' is used so that we will get an error here if the config is incorrect

@@ -5,7 +5,6 @@ import { player, RebuyableUpgradeKey } from "@/game/player";
 export type RebuyableUpgradeOptions = UpgradeBaseOptions & {
     cost: (purchased: number) => Decimal;
     upgradeKey: RebuyableUpgradeKey;
-    effect?: (purchased: number) => Decimal;
 };
 
 export class RebuyableUpgrade extends UpgradeBase {
@@ -25,7 +24,11 @@ export class RebuyableUpgrade extends UpgradeBase {
     }
 
     get effect() {
-        return this.config.effect?.(this.purchased);
+        if ("effect" in this.config === false || this.purchased === 0) return 1;
+
+        return typeof this.config.effect === "function"
+            ? this.config.effect(this.purchased)
+            : this.config.effect;
     }
 
     purchase() {

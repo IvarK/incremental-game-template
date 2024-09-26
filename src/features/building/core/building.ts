@@ -1,5 +1,9 @@
+import { EFFECT_TARGET } from "@/game/enum/effectTargets";
+import { EVENT } from "@/game/enum/eventTypes";
 import { BuildingKey, CurrencyKey, player } from "@/game/player";
 import { UpgradeBase, UpgradeBaseOptions } from "@/lib/classes/upgradeBase";
+import { EffectManager } from "@/lib/util/effect";
+import { Events } from "@/lib/util/events";
 import Decimal from "break_infinity.js";
 
 export type BuildingOptions = Omit<UpgradeBaseOptions, "description"> & {
@@ -17,6 +21,7 @@ export class Building extends UpgradeBase {
     constructor(config: BuildingOptions) {
         super(config);
         this.config = config;
+        Events.on(EVENT.GAME_TICK, (diff) => this.tick(diff as number));
     }
 
     get name() {
@@ -34,7 +39,9 @@ export class Building extends UpgradeBase {
     }
 
     get production() {
-        return this.config.production(this.purchased);
+        return this.config
+            .production(this.purchased)
+            .times(EffectManager.get(EFFECT_TARGET[this.config.currency]));
     }
 
     get canPurchase() {

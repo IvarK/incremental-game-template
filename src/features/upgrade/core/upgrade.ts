@@ -1,14 +1,14 @@
 import { player, UpgradeKey } from "@/game/player";
 import { UpgradeBase, UpgradeBaseOptions } from "@/lib/classes/upgradeBase";
+import { EffectManager } from "@/lib/util/effect";
 import Decimal from "break_infinity.js";
 
-// This reduces the queries to useUpgradeStore
+// This reduces the queries to player, so we don't need to search the array every time
 const upgradeCache: Record<string, boolean> = {};
 
 export type UpgradeOptions = UpgradeBaseOptions & {
     cost: Decimal;
     upgradeKey: UpgradeKey;
-    visible?: () => boolean;
 };
 
 export class Upgrade extends UpgradeBase {
@@ -17,6 +17,17 @@ export class Upgrade extends UpgradeBase {
     constructor(config: UpgradeOptions) {
         super(config);
         this.config = config;
+        if (
+            this.config.effect &&
+            this.config.effectTarget &&
+            this.config.effectOperator
+        ) {
+            EffectManager.register(
+                this.config.effectTarget,
+                this.config.effect,
+                this.config.effectOperator
+            );
+        }
     }
 
     get cost() {
